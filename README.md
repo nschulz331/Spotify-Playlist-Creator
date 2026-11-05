@@ -20,7 +20,7 @@ A full-stack, interactive web application built with Streamlit, the Google GenAI
 
 ## Setup / Live Demo
 
-**[Try the Live Web App Here](https://spotify-ai-playlist-creator-q6u2wi483wf.streamlit.app)**
+**[Try the Live Web App Here](https://spotify-ai-playlist-creator.streamlit.app)**
 
 ## Future Plans:
 * Custom user accounts that allow sign in without a API key or spotify login ( enter a valid email )
@@ -43,6 +43,7 @@ A full-stack, interactive web application built with Streamlit, the Google GenAI
 
 * Embedded album artwork inside the Streamlit application.
 
+* Fall back selector if AI is unavailable to select pre made playlists if Token/ Plan usae limits
 
 * Smart playlist customization according to user feedback, including:
   - Dynamic AI prompt adjustments (e.g., "make it more acoustic" or "add more 90s tracks").

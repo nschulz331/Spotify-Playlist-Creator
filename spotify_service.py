@@ -3,7 +3,6 @@ from spotipy.oauth2 import SpotifyOAuth
 import streamlit as st
 
 def get_spotify_client():
-    # Set up Spotify OAuth credentials from secrets
     auth_manager = SpotifyOAuth(
         client_id=st.secrets.get("SPOTIPY_CLIENT_ID"),
         client_secret=st.secrets.get("SPOTIPY_CLIENT_SECRET"),
@@ -14,15 +13,21 @@ def get_spotify_client():
     return spotipy.Spotify(auth_manager=auth_manager)
 
 def create_playlist(sp, playlist_name, songs):
-    # Create a private playlist directly on the current user's account
     playlist = sp.current_user_playlist_create(
-        name=playlist_name, 
+        name=playlist_name,
         public=False
     )
 
     track_uris = []
     for song in songs:
-        results = sp.search(q=song, type="track", limit=1)
+        if isinstance(song, dict):
+            title = song.get("title", "")
+            artist = song.get("artist", "")
+            query = f"track:{title} artist:{artist}"
+        else:
+            query = str(song)
+
+        results = sp.search(q=query, type="track", limit=1)
         tracks = results.get("tracks", {}).get("items", [])
         if tracks:
             track_uris.append(tracks[0]["uri"])

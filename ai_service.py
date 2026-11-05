@@ -2,7 +2,12 @@ import json
 import time
 from google import genai
 import streamlit as st
-
+'''
+custom fallbacksprompt is basicaly because i am a cheap ass and dont have
+a paid account and so i hit usage limits but it works normaly if you have 
+more token usae on dev accounts =( this is hardcoded list of songs based on 
+keywords in the prompt by the user
+'''
 def get_custom_fallbacks(prompt):
     """Returns a hardcoded list of songs based on the requested vibe."""
     prompt_lower = prompt.lower()
@@ -29,7 +34,8 @@ def get_custom_fallbacks(prompt):
             {"title": "Cruel Summer", "artist": "Taylor Swift"},
             {"title": "Stay", "artist": "Justin Bieber"}
         ]
-
+# This is the actual ai module that will run but then runs the get_custom_fallbacks
+# if app hits usage limits.
 def generate_song_recommendations(prompt):
     api_key = st.secrets.get("GEMINI_API_KEY")
     client = genai.Client(api_key=api_key)
@@ -67,7 +73,7 @@ Output your response ONLY as a JSON array of 10 objects:
             )
         except Exception as e2:
             st.error("AI is currently overloaded. Loading a curated backup playlist instead!")
-            # 3. Ultimate Fallback: The custom queue
+            # 3. third and final Fallback: the custom queue
             return get_custom_fallbacks(prompt)
 
     # Parse the JSON

@@ -1,7 +1,12 @@
+import streamlit as st
+from google import genai
 import json
 import time
-from google import genai
-import streamlit as st
+
+# This defines the "client" variable that Pylance is looking for
+client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+
+
 '''
 custom fallbacksprompt is basicaly because i am a cheap ass and dont have
 a paid account and so i hit usage limits but it works normaly if you have 
@@ -36,24 +41,20 @@ def get_custom_fallbacks(prompt):
         ]
 # This is the actual ai module that will run but then runs the get_custom_fallbacks
 # if app hits usage limits.
-def generate_song_recommendations(prompt):
-    api_key = st.secrets.get("GEMINI_API_KEY")
-    client = genai.Client(api_key=api_key)
-
-    search_topic = prompt if prompt.strip() else "the current top hit songs in Canada"
-
+def generate_song_recommendations(prompt, track_count=10, mood="Any"):
     full_prompt = f"""
-The user wants a playlist for: "{search_topic}".
-Provide a list of 10 tracks that fit this vibe perfectly.
-CRITICAL INSTRUCTIONS:
-- Return ONLY unique tracks (no duplicate artist/title pairs).
-- Ensure songs strictly match the requested genre/vibe.
-Output your response ONLY as a JSON array of 10 objects:
-[
-  {{"title": "Song Title", "artist": "Artist Name"}}
-]
-"""
-    # 1. Try Primary Model
+    The user wants a playlist for: "{prompt}".
+    The mood of the playlist should be: {mood}.
+    Provide a list of EXACTLY {track_count} tracks that fit this vibe perfectly.
+    CRITICAL INSTRUCTIONS:
+    - Return ONLY unique tracks.
+    - Ensure songs strictly match the requested genre/vibe.
+    Output your response ONLY as a JSON array of {track_count} objects:
+    [
+      {{"title": "Song Title", "artist": "Artist Name"}}
+    ]
+    """
+    # 1. Try Primary Model 
     try:
         response = client.models.generate_content(
             model="gemini-3.5-flash-lite",

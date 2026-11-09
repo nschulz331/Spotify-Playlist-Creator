@@ -8,33 +8,23 @@ st.set_page_config(page_title="Spotify Playlist Creator", layout="wide")
 st.title("Spotify AI Playlist Creator")
 
 # --- 1. SPOTIFY LOGIN UI ---
+# --- 1. MASTER ACCOUNT BACKGROUND LOGIN ---
 sp_oauth = SpotifyOAuth(
     client_id=st.secrets.get("SPOTIPY_CLIENT_ID"),
     client_secret=st.secrets.get("SPOTIPY_CLIENT_SECRET"),
-    redirect_uri=st.secrets.get("SPOTIPY_REDIRECT_URI"),
-    scope="playlist-modify-public",
-    open_browser=False # Critical: Prevents terminal freezes
+    redirect_uri="http://127.0.0.1:8080", # Must match exactly, even though it's hidden now
+    scope="playlist-modify-public playlist-modify-private"
 )
 
-token_info = sp_oauth.get_cached_token()
+# Fetch a fresh token using the master key in your secrets
+token_info = sp_oauth.refresh_access_token(st.secrets.get("SPOTIPY_REFRESH_TOKEN"))
 
-if not token_info:
-    st.warning(" You need to connect your Spotify account first.")
-    auth_url = sp_oauth.get_authorize_url()
-    st.markdown(f"[** Click here to log in to Spotify**]({auth_url})")
-    
-    redirect_response = st.text_input("Paste the entire 'localhost' URL here after logging in:")
-    
-    if redirect_response:
-        code = sp_oauth.parse_response_code(redirect_response)
-        token_info = sp_oauth.get_access_token(code)
-        st.success("Successfully connected! Refreshing...")
-        st.rerun()
-        
-    st.stop() # Stops the rest of the page from loading until logged in
-
-# If authenticated, create the client
+# Log in silently
 sp = spotipy.Spotify(auth=token_info['access_token'])
+
+# Optional: Show a quick success message at the top of your app so you know it worked
+user_profile = sp.current_user()
+st.success(f"Connected behind the scenes as: {user_profile['display_name']}")
 
 # --- 2. MAIN APP UI ---
 col1, col2 = st.columns(2)

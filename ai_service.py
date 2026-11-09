@@ -39,6 +39,7 @@ def get_custom_fallbacks(prompt):
             {"title": "Cruel Summer", "artist": "Taylor Swift"},
             {"title": "Stay", "artist": "Justin Bieber"}
         ]
+
 # This is the actual ai module that will run but then runs the get_custom_fallbacks
 # if app hits usage limits.
 def generate_song_recommendations(prompt, track_count=10, mood="Any"):

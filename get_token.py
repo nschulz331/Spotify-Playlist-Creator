@@ -12,7 +12,8 @@ sp_oauth = SpotifyOAuth(
     client_id=st.secrets["SPOTIPY_CLIENT_ID"],
     client_secret=st.secrets["SPOTIPY_CLIENT_SECRET"],
     redirect_uri="http://127.0.0.1:8080",
-    scope="playlist-modify-public playlist-modify-private"
+    scope="playlist-modify-public playlist-modify-private",
+    show_dialog=True  # Forces the permissions screen to appear
 )
 
 print("\nAuthorization URL:\n", sp_oauth.get_authorize_url())

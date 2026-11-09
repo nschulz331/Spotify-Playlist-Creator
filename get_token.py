@@ -5,9 +5,12 @@ import tomllib
 with open(".streamlit/secrets.toml", "rb") as f:
     secrets = tomllib.load(f)
 
+import streamlit as st
+from spotipy.oauth2 import SpotifyOAuth
+
 sp_oauth = SpotifyOAuth(
-    client_id=secrets["SPOTIPY_CLIENT_ID"],
-    client_secret=secrets["SPOTIPY_CLIENT_SECRET"],
+    client_id=st.secrets["SPOTIPY_CLIENT_ID"],
+    client_secret=st.secrets["SPOTIPY_CLIENT_SECRET"],
     redirect_uri="http://127.0.0.1:8080",
     scope="playlist-modify-public playlist-modify-private"
 )
